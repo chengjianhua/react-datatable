@@ -1,0 +1,163 @@
+body {
+  background-color: #eee;
+}
+
+$dataTableBackgroundHover: #f5f5f5;
+.data-table {
+  width: 100%;
+  padding: 0;
+  margin: 0 auto;
+  background: #fff;
+  font-size: 0.875rem;
+  margin-bottom: 80px;
+  text-align: left;
+  border-spacing: 0;
+
+  &>tbody>tr>td, &>tfoot>tr>td, &>thead>tr>th{
+    height: 50px;
+    padding: 0 20px;
+    border: none;
+    border-top: 1px solid #ddd;
+    word-break: break-all;
+    vertical-align: middle;
+  }
+
+  &>thead>tr>th {
+    border-top: 0;
+
+  }
+
+  .sort {
+    &-default{
+      background: url(//cdn.genedock.com/img/table/sort_both.png) center right no-repeat;
+      cursor: pointer;
+    }
+
+    &-asc {
+      background: url(//cdn.genedock.com/img/table/sort_asc.png) center right no-repeat;
+      cursor: pointer;
+    }
+
+    &-desc {
+      background: url(//cdn.genedock.com/img/table/sort_desc.png) center right no-repeat;
+      cursor: pointer;
+    }
+  }
+
+  .pagination {
+
+  }
+}
+
+.data-table-hover {
+  & > tbody > tr:hover {
+    background-color: $dataTableBackgroundHover;
+  }
+}
+
+
+.dataTables_info {
+  display: none;
+}
+.dataTables_empty{
+  text-align: center;
+  color: #666 !important;
+  font-weight: 100 !important;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  display: inline-block;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.previous,.next{
+  border: 1px solid #ccc;
+}
+
+.paginate_button + span{
+  padding: 7px 0;
+  border-bottom: 1px solid #ccc;
+  border-top: 1px solid #ccc;
+}
+
+.paginate_button.current {
+  background: #7a6cb0;
+  color: #fff;
+}
+
+.dataTables_paginate {
+  text-align: right;
+  padding: 20px 54px;
+  margin-top: -80px;
+  border-top: 1px solid #ddd;
+  background: #f9f9f9;
+}
+
+
+.dataTable>thead>tr>th {
+  border-bottom: none;
+  height: 62px;
+  vertical-align: middle;
+  padding: 0 20px;
+}
+.dataTable>tbody>tr>td {
+  height: 50px;
+  vertical-align: middle;
+  padding: 0 20px;
+}
+
+table.dataTable thead .sorting {
+  background: url("//cdn.genedock.com/img/table/sort_both.png") no-repeat center right;
+}
+
+table.dataTable thead .sorting_asc {
+  background: url("//cdn.genedock.com/img/table/sort_asc.png") no-repeat center right;
+}
+
+table.dataTable thead .sorting_desc {
+  background: url("//cdn.genedock.com/img/table/sort_desc.png") no-repeat center right;
+}
+
+table.dataTable thead .sorting_asc_disabled {
+  background: url("//cdn.genedock.com/img/table/sort_asc_disabled.png") no-repeat center right;
+}
+
+table.dataTable thead .sorting_desc_disabled {
+  background: url("//cdn.genedock.com/img/table/sort_desc_disabled.png") no-repeat center right;
+}
+
+.dataTables_wrapper .dataTables_filter {
+  position: fixed;
+  right: 5%;
+  top: 65px;
+  z-index: 1;
+}
+.dataTables_filter .form-control{
+  border-radius: 2px;
+  width: 100px;
+  height: 30px;
+  font-size: 12px;
+  transition: width .3s;
+  -moz-transition: width .3s;
+  -webkit-transition: width .3s;
+  -o-transition: width .3s;
+}
+.dataTables_length {
+  display: none;
+}
+
+.dataTables_length select {
+  display: inline-block;
+  margin-bottom: 2px;
+  font-size: 14px;
+  color: #555;
+  vertical-align: middle;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  height: 30px;
+  line-height: 30px;
+  cursor: pointer;
+}
