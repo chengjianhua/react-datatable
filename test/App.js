@@ -9,7 +9,7 @@ export default class App extends Component {
     this.handleSearchChange = this.handleSearchChange.bind(this);
 
     this.state = {
-      query: ''
+      query: 'b2g'
     }
   }
 

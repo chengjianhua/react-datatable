@@ -1,12 +1,16 @@
 import React, {Component, PropTypes} from 'react';
 import classname from 'classname';
 import Column from './Column';
+import Pagination from './Pagination';
 
 import Store from './utils/Store';
 
 const style = {
-  container: {
-    width: '100%'
+  wrapper: {
+    width: '100%',
+    height: '550px',
+    overflowY: 'scroll',
+    overflowX: 'hidden'
   }
 };
 
@@ -17,7 +21,16 @@ class DataTable extends Component {
     hover: PropTypes.bool,
     data: PropTypes.arrayOf(PropTypes.object),
     search: PropTypes.bool,
-    searchText: PropTypes.string
+    searchText: PropTypes.string,
+    pageSize: PropTypes.number
+  };
+
+  static defaultProps = {
+    hover: true,
+    data: [],
+    search: true,
+    searchText: '',
+    pageSize: 10
   };
 
   constructor(props) {
@@ -25,26 +38,26 @@ class DataTable extends Component {
 
     this.store = new Store(props.data.slice());
 
-    this.getColumns = this.getColumns.bind(this);
     this.initTable = this.initTable.bind(this);
-    this.renderTbody = this.renderTbody.bind(this);
-    this.getInitialData = this.getInitialData.bind(this);
+    this.getColumns = this.getColumns.bind(this);
     this.getTableHeaders = this.getTableHeaders.bind(this);
+    this.renderTbody = this.renderTbody.bind(this);
+    this.renderPagination = this.renderPagination.bind(this);
     this.handleSort = this.handleSort.bind(this);
+    this.handlePageChange = this.handlePageChange.bind(this);
 
-    // initialize the table
+    // initialize the table and data store
     this.initTable();
 
     this.state = {
-      searchText: props.searchText,
-      data: this.getInitialData(),
-      orderStatus: this.store.getSortInfo()
+      data: this.store.getCurrentData(),
+      orderStatus: this.store.getSortInfo(),
+      activePage: 1
     };
   }
 
   initTable() {
     const {search, searchText} = this.props;
-
     /* START: 将 Column 中需要用到的数据存储到 store 中 */
     this.store.setColumns(this.getColumns().reduce((prev, curr) => {
         // 将每一列的列信息以列的 field 字段作为键，值为列的所有属性的集合来存储
@@ -53,11 +66,11 @@ class DataTable extends Component {
       }, {}));
     /* END: 将 Column 中需要用到的数据存储到 store 中 */
 
-    /* 如果开启了搜索并且搜索的字符串不为空，那么保存搜索的字符串并搜索 */
+    /* START: 如果开启了搜索并且搜索的字符串不为空，那么保存搜索的字符串并搜索 */
     if(search && searchText.trim()) {
       this.store.setSearchText(searchText);
     }
-
+    /* END: 如果开启了搜索并且搜索的字符串不为空，那么保存搜索的字符串并搜索 */
 
   }
 
@@ -78,14 +91,7 @@ class DataTable extends Component {
     });
   }
 
-  getInitialData() {
-    const data = this.store.getCurrentData();
-
-    return data;
-  }
-
   handleSort(sortField, order) {
-
     this.setState({
       data: this.store.sort(sortField, order).getCurrentData(),
       orderStatus: {
@@ -94,8 +100,18 @@ class DataTable extends Component {
     });
   }
 
+  handlePageChange(nextPage) {
+    this.setState({
+      activePage: nextPage
+    });
+  }
+
   renderTbody() {
-    return this.state.data.map((row, rowIndex) => {
+    const {activePage, data} = this.state;
+    const {pageSize} = this.props;
+    const start = (activePage - 1) * pageSize;
+    const end = start + pageSize;
+    return data.slice(start, end).map((row, rowIndex) => {
       const tds = this.getColumns().map((column, columnIndex) => {
         return (
           <td key={`${rowIndex}-${columnIndex}`}>
@@ -112,11 +128,23 @@ class DataTable extends Component {
     });
   }
 
+  renderPagination() {
+    return (
+      <Pagination
+        total={this.state.data.length}
+        activePage={this.state.activePage}
+        size = {this.props.pageSize}
+        onPage={this.handlePageChange}
+        />
+    );
+  }
+
   componentWillReceiveProps(nextProps) {
     if(nextProps.searchText !== this.store.searchText) {
       this.store.setSearchText(nextProps.searchText);
       this.setState({
-        data: this.store.getCurrentData()
+        data: this.store.getCurrentData(),
+        activePage: 1
       });
     }
   }
@@ -125,15 +153,14 @@ class DataTable extends Component {
     const {hover, data, children} = this.props;
 
     const cols = this.getColumns().map((column, index) => {
-      const {width, field} = column;
       return (
-        <col key={index} style={{width: width}} />
+        <col key={column.index} style={{width: column.width}} />
       );
     });
 
     const ths = this.getTableHeaders();
-
     const tbody = this.renderTbody();
+    const pagination = this.renderPagination();
 
     const tableClass = classname({
       'data-table': true,
@@ -141,15 +168,20 @@ class DataTable extends Component {
     });
 
     return (
-      <table className={tableClass}>
-        <colgroup>{cols}</colgroup>
+      <div>
+        <div style={style.wrapper}>
+          <table className={tableClass}>
+            <colgroup>{cols}</colgroup>
 
-        <thead>
-          <tr>{ths}</tr>
-        </thead>
+            <thead>
+              <tr>{ths}</tr>
+            </thead>
 
-        <tbody>{tbody}</tbody>
-      </table>
+            <tbody>{tbody}</tbody>
+          </table>
+        </div>
+        {pagination}
+      </div>
     );
   }
 }
