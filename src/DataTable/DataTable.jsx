@@ -13,7 +13,11 @@ const style = {
 class DataTable extends Component {
 
   static propTypes = {
-    children: PropTypes.arrayOf(PropTypes.instanceOf(Column))
+    children: PropTypes.arrayOf(PropTypes.instanceOf(Column)),
+    hover: PropTypes.bool,
+    data: PropTypes.arrayOf(PropTypes.object),
+    search: PropTypes.bool,
+    searchText: PropTypes.string
   };
 
   constructor(props) {
@@ -32,12 +36,15 @@ class DataTable extends Component {
     this.initTable();
 
     this.state = {
+      searchText: props.searchText,
       data: this.getInitialData(),
       orderStatus: this.store.getSortInfo()
     };
   }
 
   initTable() {
+    const {search, searchText} = this.props;
+
     /* START: 将 Column 中需要用到的数据存储到 store 中 */
     this.store.setColumns(this.getColumns().reduce((prev, curr) => {
         // 将每一列的列信息以列的 field 字段作为键，值为列的所有属性的集合来存储
@@ -45,6 +52,11 @@ class DataTable extends Component {
         return prev;
       }, {}));
     /* END: 将 Column 中需要用到的数据存储到 store 中 */
+
+    /* 如果开启了搜索并且搜索的字符串不为空，那么保存搜索的字符串并搜索 */
+    if(search && searchText.trim()) {
+      this.store.setSearchText(searchText);
+    }
 
 
   }
@@ -68,6 +80,7 @@ class DataTable extends Component {
 
   getInitialData() {
     const data = this.store.getCurrentData();
+
     return data;
   }
 
@@ -99,8 +112,18 @@ class DataTable extends Component {
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.searchText !== this.store.searchText) {
+      this.store.setSearchText(nextProps.searchText);
+      this.setState({
+        data: this.store.getCurrentData()
+      });
+    }
+  }
+
   render () {
     const {hover, data, children} = this.props;
+
     const cols = this.getColumns().map((column, index) => {
       const {width, field} = column;
       return (

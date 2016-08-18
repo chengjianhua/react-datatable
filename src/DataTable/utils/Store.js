@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // 包括一系列对 Data Table 中数据的操作藏发的集合,用于管理 Data Table 中的数据 //
 ////////////////////////////////////////////////////////////////////////////
-
+import Fuse from 'fuse.js';
 import {Order} from './Constants';
 
 function _sort({array, sortField, order}) {
@@ -24,10 +24,15 @@ function _sort({array, sortField, order}) {
 class Store {
   constructor(data) {
 
-    this.data = data;
+    this.data = data.slice();
     this.sortInfo = null;
     this.columns = null;
-    this.searchText = '';
+    this.searchInfo = {
+      enable: false,
+      text: '',
+      result: this.data.slice()
+    };
+    // this.filteredData = data;
   }
 
   setData(data) {
@@ -40,10 +45,36 @@ class Store {
     this.sortInfo = {
       field, order
     };
+    return this;
   }
-
   getSortInfo() {
     return Object.assign({}, this.sortInfo);
+  }
+
+  setSearchText(searchText) {
+    if(searchText.trim()) {
+      this.searchInfo.text = searchText;
+      this.searchInfo.enable = true;
+    } else {
+      this.searchInfo.text = searchText;
+      this.searchInfo.enable = false;
+    }
+    return this.search();
+  }
+  getSearchText() {
+    return this.searchInfo.text;
+  }
+  setSearchResult(result) {
+    this.searchInfo.enable = true;
+    this.searchInfo.result = result;
+    return this;
+  }
+  getSearchEnable() {
+    return this.searchInfo.enable && this.searchInfo.text;
+  }
+  getSearchResult() {
+    const {enable, result} = this.searchInfo;
+    return enable === true ? result : this.getCurrentData();
   }
 
   /**
@@ -51,13 +82,14 @@ class Store {
    */
   setColumns(columns) {
     this.columns = columns;
+    return this;
   }
   getColumns() {
-    return this.columns.slice();
+    return Object.assign({}, this.columns);
   }
 
   getCurrentData() {
-    return this.data.slice();
+    return this.getSearchEnable() ? this.getSearchResult() : this.data.slice();
   }
 
   /**
@@ -75,6 +107,46 @@ class Store {
 
     this.setData(currentData);
 
+    return this;
+  }
+
+  search() {
+    if(this.getSearchEnable()) {
+
+      // const fuse = new Fuse(this.data.slice(), {
+      //   caseSensitive: false,
+      //   shouldSort: true,
+      //   tokenize: false,
+      //   threshold: 0.3,
+      //   location: 0,
+      //   distance: 100,
+      //   maxPatternLength: 32,
+      //   keys: [
+      //     // Object.keys(this.getColumns()),
+      //     'name', 'modified_time'
+      //   ]
+      // });
+      //
+      // const searchResult = fuse.search(this.getSearchText());
+      // this.setSearchResult(searchResult);
+      //
+      //
+      // console.log(searchResult);
+
+
+      const data = this.data.slice();
+      const searchText = this.getSearchText();
+      const columnKeys = Object.keys(this.getColumns());
+      const reg = new RegExp(searchText.toLocaleLowerCase().split('').join('.*?'), ['g']);
+
+      const result = data.filter((value) => {
+        return columnKeys.some((key) => {
+          return reg.exec(String(value[key]).toLocaleLowerCase());
+        });
+      });
+
+      this.setSearchResult(result);
+    }
     return this;
   }
 
