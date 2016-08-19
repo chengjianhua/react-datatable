@@ -1,31 +1,65 @@
 import React, { PropTypes } from 'react'
 import classname from 'classname';
 import {paginationButtons} from './utils/utils';
-
-const BUTTONS_COUNT = 9;
+import {PAGE_SIZE, BUTTONS_COUNT} from './utils/Constants';
 
 class Pagination extends React.Component {
-
   constructor(props) {
     super(props);
 
     this.handlePageButtonClick = this.handlePageButtonClick.bind(this);
+    this.renderPagination = this.renderPagination.bind(this);
   }
 
   static propTypes = {
     total: PropTypes.number.isRequired,
     size: React.PropTypes.number,
-    activePage: PropTypes.number
+    activePage: PropTypes.number,
+    pager: PropTypes.bool
   };
 
   static defaultProps = {
-    size: 20,
-    activePage: 1
+    size: PAGE_SIZE,
+    activePage: 1,
+    pager: false
   };
 
   handlePageButtonClick(nextPage) {
     const {onPage} = this.props;
     onPage && onPage(nextPage);
+  }
+
+  renderPagination() {
+    const {size, total, activePage, pager} = this.props;
+    const length = Math.ceil(total / size);
+    const previousPage = activePage === 1 ? 1: activePage - 1;
+    const nextPage = activePage === length ? length : activePage + 1;
+    let pageButtons = [];
+
+    pageButtons.push(
+      <li key="previous" className="pagination-button previous" onClick={this.handlePageButtonClick.bind(this, previousPage)}>{'<'}</li>
+    );
+
+    if (!pager) {
+      const pageNumbers = paginationButtons(BUTTONS_COUNT, activePage, length).map((value, index) => {
+        const classes = classname({
+          'pagination-button': true,
+          'active': value + 1 === activePage
+        });
+        return (
+          value === 'ellipsis' ? <li key={`ellipsis${index}`} className={classes}>...</li> :
+            <li className={classes} key={value + 1} onClick={this.handlePageButtonClick.bind(this, value + 1)}><span>{value + 1}</span></li>
+        );
+      });
+
+      pageButtons = pageButtons.concat(pageNumbers);
+    }
+
+    pageButtons.push(
+      <li key="next" className="pagination-button next" onClick={this.handlePageButtonClick.bind(this, nextPage)}>{'>'}</li>
+    );
+
+    return pageButtons;
   }
 
   render () {
@@ -41,28 +75,13 @@ class Pagination extends React.Component {
       }
     };
 
-    const {size, total, activePage} = this.props;
-    const length = Math.ceil(total / size);
-    const previousPage = activePage === 1 ? 1: activePage - 1;
-    const nextPage = activePage === length ? length : activePage + 1;
-
-    const pageButtons = paginationButtons(BUTTONS_COUNT, activePage, length).map((value, index) => {
-      const classes = classname({
-        'pagination-button': true,
-        'active': value + 1 === activePage
-      });
-      return (
-        value === 'ellipsis' ? <li key={`ellipsis${index}`} className={classes}>...</li> :
-          <li className={classes} key={value + 1} onClick={this.handlePageButtonClick.bind(this, value + 1)}><span>{value + 1}</span></li>
-      );
-    });
+    const {pager} = this.props;
+    const pageButtons = this.renderPagination();
 
     return (
       <div style={style.root}>
         <ul style={style.pagination} className="pagination">
-          <li key="previous" className="pagination-button previous" onClick={this.handlePageButtonClick.bind(this, previousPage)}>{'<'}</li>
           {pageButtons}
-          <li key="next" className="pagination-button next" onClick={this.handlePageButtonClick.bind(this, nextPage)}>{'>'}</li>
         </ul>
       </div>
     );

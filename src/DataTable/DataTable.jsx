@@ -2,27 +2,20 @@ import React, {Component, PropTypes} from 'react';
 import classname from 'classname';
 import Column from './Column';
 import Pagination from './Pagination';
+import {PAGE_SIZE} from './utils/Constants';
 
 import Store from './utils/Store';
-
-const style = {
-  wrapper: {
-    width: '100%',
-    height: '550px',
-    overflowY: 'scroll',
-    overflowX: 'hidden'
-  }
-};
 
 class DataTable extends Component {
 
   static propTypes = {
-    children: PropTypes.arrayOf(PropTypes.instanceOf(Column)),
+    children: PropTypes.arrayOf(PropTypes.element),
     hover: PropTypes.bool,
     data: PropTypes.arrayOf(PropTypes.object),
     search: PropTypes.bool,
     searchText: PropTypes.string,
-    pageSize: PropTypes.number
+    pageSize: PropTypes.number,
+    pager: PropTypes.bool
   };
 
   static defaultProps = {
@@ -30,7 +23,8 @@ class DataTable extends Component {
     data: [],
     search: true,
     searchText: '',
-    pageSize: 10
+    pageSize: PAGE_SIZE,
+    pager: false
   };
 
   constructor(props) {
@@ -147,12 +141,14 @@ class DataTable extends Component {
   }
 
   renderPagination() {
+    const {pager} = this.props;
     return (
       <Pagination
         total={this.state.data.length}
         activePage={this.state.activePage}
         size = {this.props.pageSize}
         onPage={this.handlePageChange}
+        pager={pager}
         />
     );
   }
@@ -170,7 +166,7 @@ class DataTable extends Component {
   }
 
   render () {
-    const {hover, data, children} = this.props;
+    const {hover, data, children, pageSize} = this.props;
 
     const cols = this.getColumns().map((column, index) => {
       // 根据 <Column /> 中的配置信息设定列的格式
@@ -182,6 +178,15 @@ class DataTable extends Component {
     const ths = this.getTableHeaders();
     const tbody = this.renderTbody();
     const pagination = this.renderPagination();
+
+    const style = {
+      wrapper: {
+        width: '100%',
+        height: `${50 * (PAGE_SIZE + 1)}px`, // 正好高度为默认显示行数的高度
+        overflowY: pageSize === PAGE_SIZE ? 'hidden' : 'scroll',// 避免默认显示滚动条
+        overflowX: 'hidden'
+      }
+    };
 
     const tableClass = classname({
       'data-table': true,

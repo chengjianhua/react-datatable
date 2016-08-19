@@ -11,7 +11,7 @@ class Column extends React.Component {
 
   static propTypes = {
     children: PropTypes.node,
-    cell: PropTypes.node,
+    cell: PropTypes.func,
     width: PropTypes.string,
     field: PropTypes.string.isRequired,
     sort: PropTypes.bool,

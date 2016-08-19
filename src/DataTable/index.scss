@@ -62,6 +62,13 @@ $dataTableBackgroundHover: #f5f5f5;
   background: #fff;
   margin: 0;
   padding: 0;
+  /*禁用选择防止点击翻页按钮过快的时候选中按钮内文字*/
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 
   .pagination-button {
     box-sizing: border-box;

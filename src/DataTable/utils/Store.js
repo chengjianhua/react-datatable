@@ -1,8 +1,8 @@
 /////////////////////////////////////////////////////////////////////////////
 // 包括一系列对 Data Table 中数据的操作藏发的集合,用于管理 Data Table 中的数据 //
 ////////////////////////////////////////////////////////////////////////////
-import Fuse from 'fuse.js';
 import {Order} from './Constants';
+import {stringIsNotEmpty} from './utils';
 
 function _sort({array, sortField, order}) {
   order = order.toLowerCase();
@@ -36,7 +36,11 @@ class Store {
   }
 
   setData(data) {
-    this.data = data;
+    if (this.getSearchEnable()){
+      this.setSearchResult(data);
+    } else {
+      this.data = data;
+    }
   }
   /**
    * 保存当前的排序信息
@@ -52,29 +56,29 @@ class Store {
   }
 
   setSearchText(searchText) {
-    if(searchText.trim()) {
+    if(stringIsNotEmpty(searchText)) {
       this.searchInfo.text = searchText;
       this.searchInfo.enable = true;
+      return this.search();
     } else {
       this.searchInfo.text = searchText;
       this.searchInfo.enable = false;
+      return this;
     }
-    return this.search();
   }
   getSearchText() {
     return this.searchInfo.text;
   }
   setSearchResult(result) {
-    this.searchInfo.enable = true;
     this.searchInfo.result = result;
     return this;
   }
   getSearchEnable() {
-    return this.searchInfo.enable && this.searchInfo.text;
+    return this.searchInfo.enable && stringIsNotEmpty(this.searchInfo.text);
   }
   getSearchResult() {
-    const {enable, result} = this.searchInfo;
-    return enable === true ? result : this.getCurrentData();
+    const {result} = this.searchInfo;
+    return this.getSearchEnable() ? result : this.data.slice();
   }
 
   /**
@@ -106,37 +110,18 @@ class Store {
     });
 
     this.setData(currentData);
-
     return this;
   }
 
+  /**
+   * 仅限内部的 setSearchText 调用，不需要手动调用
+   */
   search() {
     if(this.getSearchEnable()) {
-
-      // const fuse = new Fuse(this.data.slice(), {
-      //   caseSensitive: false,
-      //   shouldSort: true,
-      //   tokenize: false,
-      //   threshold: 0.3,
-      //   location: 0,
-      //   distance: 100,
-      //   maxPatternLength: 32,
-      //   keys: [
-      //     // Object.keys(this.getColumns()),
-      //     'name', 'modified_time'
-      //   ]
-      // });
-      //
-      // const searchResult = fuse.search(this.getSearchText());
-      // this.setSearchResult(searchResult);
-      //
-      //
-      // console.log(searchResult);
-
-
       const data = this.data.slice();
       const searchText = this.getSearchText();
       const columnKeys = Object.keys(this.getColumns());
+      // 拼接字符串成正则表达式，可实现简单有效的模糊匹配
       const reg = new RegExp(searchText.toLocaleLowerCase().split('').join('.*?'), ['g']);
 
       const result = data.filter((value) => {

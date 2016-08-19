@@ -21,8 +21,8 @@ export default class App extends Component {
 
   render() {
     const style = {
-      container: {
-        width: '100%',
+      root: {
+        width: '50%',
         textAlign: 'center'
       },
       searchBox: {
@@ -47,7 +47,7 @@ export default class App extends Component {
     };
 
     return (
-      <div>
+      <div style={style.root}>
         <h1>Hello, world.</h1>
         <div style={style.searchBox}>
           <input style={style.input} value={this.state.query} onChange={this.handleSearchChange} />
