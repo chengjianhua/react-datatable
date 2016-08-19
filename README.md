@@ -10,9 +10,9 @@ npm install
 
 ## Usage
 
-### <DataTable />
+### `<DataTable />`
 
-The following table is the parameters list for Component <DataTable />:
+The following table is the parameters list for Component `<DataTable />`:
 
 Pooperty     | Type      | Default Value | Description
 -------------|-----------|---------------|----------------------------------------------------------
@@ -22,14 +22,14 @@ Pooperty     | Type      | Default Value | Description
 `searchText` | string    | `''`          | Provide a search interface to outer component
 `pager`      | `boolean` | `false`       | Enable to just show the button 'previous' and 'next'
 
-### <Column />
+### `<Column />`
 
-Property  | Type  |  Default Value |  Description
---|---|---|---
-`cell`  | `function(row, column, index)`  | N/A  | A function accept three parameter: `row`, `column`, `index`, return a `React.Component`. `row` maps to a object in data array. `column` maps all the props of the current `<Column />`. `index` maps to the index of current row in the table.
-`width`  |  `string` |  `auto` |  eg. `12px`, `20%`, `5rem`
-`field`  | `string`  | [**required**]  |   The corresponding key name of the column
-`sort` | `boolean`  | true  | Enable the sort funtionality of current column
+Property | Type                           | Default Value  | Description
+---------|--------------------------------|----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+`cell`   | `function(row, column, index)` | N/A            | A function accept three parameter: `row`, `column`, `index`, return a `React.Component`. `row` maps to a object in data array. `column` maps all the props of the current `<Column />`. `index` maps to the index of current row in the table.
+`width`  | `string`                       | `auto`         | eg. `12px`, `20%`, `5rem`
+`field`  | `string`                       | [**required**] | The corresponding key name of the column
+`sort`   | `boolean`                      | true           | Enable the sort funtionality of current column
 
 ## Example
 

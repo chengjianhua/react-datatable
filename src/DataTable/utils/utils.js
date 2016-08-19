@@ -3,15 +3,15 @@ function range(len, start) {
   let end = 0;
   const out = [];
 
-  if (start === undefined) {
-    start = 0;
-    end = len;
-  } else {
+  if (start) {
     end = start;
     start = len;
+  } else {
+    start = 0;
+    end = len;
   }
 
-  for (let i = start; i < end ;i++) {
+  for (let i = start; i < end; i++) {
     out.push(i);
   }
 

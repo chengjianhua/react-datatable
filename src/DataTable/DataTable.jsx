@@ -1,8 +1,8 @@
 import React, {Component, PropTypes} from 'react';
-import classname from 'classname';
-import Column from './Column';
+import classnames from 'classnames';
 import Pagination from './Pagination';
 import {PAGE_SIZE} from './utils/Constants';
+import {stringIsNotEmpty} from './utils/utils';
 
 import Store from './utils/Store';
 
@@ -54,18 +54,17 @@ class DataTable extends Component {
     const {search, searchText} = this.props;
     /* START: 将 Column 中需要用到的数据存储到 store 中 */
     this.store.setColumns(this.getColumns().reduce((prev, curr) => {
-        // 将每一列的列信息以列的 field 字段作为键，值为列的所有属性的集合来存储
-        prev[curr.field] = curr;
-        return prev;
-      }, {}));
+      // 将每一列的列信息以列的 field 字段作为键，值为列的所有属性的集合来存储
+      prev[curr.field] = curr;
+      return prev;
+    }, {}));
     /* END: 将 Column 中需要用到的数据存储到 store 中 */
 
     /* START: 如果开启了搜索并且搜索的字符串不为空，那么保存搜索的字符串并搜索 */
-    if(search && searchText.trim()) {
+    if (search && stringIsNotEmpty(searchText)) {
       this.store.setSearchText(searchText);
     }
     /* END: 如果开启了搜索并且搜索的字符串不为空，那么保存搜索的字符串并搜索 */
-
   }
 
   /**
@@ -74,7 +73,7 @@ class DataTable extends Component {
   getColumns() {
     return React.Children.map(this.props.children, (child, index) => {
       const props = child.props;
-      return Object.assign({}, child.props, {index});
+      return Object.assign({}, props, {index});
     });
   }
 
@@ -82,10 +81,10 @@ class DataTable extends Component {
    * 根据每一列的配置信息生成列表的头部信息
    */
   getTableHeaders() {
-    return React.Children.map(this.props.children, (child, index) => {
+    return React.Children.map(this.props.children, (child) => {
       const {sort, field} = child.props;
       return React.cloneElement(child, {
-        onSort: this.handleSort.bind(this, field),
+        onSort: sort ? this.handleSort.bind(this, field) : null,
         orderStatus: this.state.orderStatus
       });
     });
@@ -123,7 +122,7 @@ class DataTable extends Component {
 
         // 如果 <Column /> 组件设定了 cell 属性则使用自定义的单元格组件否则只是简单
         // 输出改列单元格的值的字符串格式
-        const cellPresentation = cell ? cell(row, column, rowIndex) : row[column.field];
+        const cellPresentation = cell ? cell(row, column, rowIndex) : row[field];
 
         return (
           <td key={`${rowIndex}-${columnIndex}`}>
@@ -141,12 +140,13 @@ class DataTable extends Component {
   }
 
   renderPagination() {
-    const {pager} = this.props;
+    const {pager, pageSize} = this.props;
+    const {data, activePage} = this.state;
     return (
       <Pagination
-        total={this.state.data.length}
-        activePage={this.state.activePage}
-        size = {this.props.pageSize}
+        total={data.length}
+        activePage={activePage}
+        size={pageSize}
         onPage={this.handlePageChange}
         pager={pager}
         />
@@ -156,7 +156,7 @@ class DataTable extends Component {
   componentWillReceiveProps(nextProps) {
     // 当 <DataTable /> 组件的 searchText 属性发生变化的时候将 searchText 存入 store
     // 中并且触发 store 中的搜索函数并且设定当前 state 中的数据为搜索后的结果
-    if(nextProps.searchText !== this.store.searchText) {
+    if (nextProps.searchText !== this.store.searchText) {
       this.store.setSearchText(nextProps.searchText);
       this.setState({
         data: this.store.getCurrentData(),
@@ -165,15 +165,13 @@ class DataTable extends Component {
     }
   }
 
-  render () {
-    const {hover, data, children, pageSize} = this.props;
+  render() {
+    const {hover, pageSize} = this.props;
 
-    const cols = this.getColumns().map((column, index) => {
+    const cols = this.getColumns().map((column) => (
       // 根据 <Column /> 中的配置信息设定列的格式
-      return (
-        <col key={column.index} style={{width: column.width}} />
-      );
-    });
+      <col key={column.index} style={{width: column.width}} />
+    ));
 
     const ths = this.getTableHeaders();
     const tbody = this.renderTbody();
@@ -183,12 +181,12 @@ class DataTable extends Component {
       wrapper: {
         width: '100%',
         height: `${50 * (PAGE_SIZE + 1)}px`, // 正好高度为默认显示行数的高度
-        overflowY: pageSize === PAGE_SIZE ? 'hidden' : 'scroll',// 避免默认显示滚动条
+        overflowY: pageSize === PAGE_SIZE ? 'hidden' : 'scroll', // 避免默认显示滚动条
         overflowX: 'hidden'
       }
     };
 
-    const tableClass = classname({
+    const tableClass = classnames({
       'data-table': true,
       'data-table-hover': hover
     });

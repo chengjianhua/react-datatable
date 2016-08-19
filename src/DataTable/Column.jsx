@@ -4,7 +4,7 @@
  * @date 2016-8-15
  */
 import React, {PropTypes} from 'react';
-import classname from 'classname';
+import classnames from 'classnames';
 import {Order} from './utils/Constants';
 
 class Column extends React.Component {
@@ -14,7 +14,7 @@ class Column extends React.Component {
     cell: PropTypes.func,
     width: PropTypes.string,
     field: PropTypes.string.isRequired,
-    sort: PropTypes.bool,
+    sort: PropTypes.bool
   };
 
   static defaultProps = {
@@ -37,19 +37,18 @@ class Column extends React.Component {
 
     const {sort, onSort} = this.props;
 
-    onSort && onSort(this.state.order);
+    sort && onSort && onSort(this.state.order);
 
     this.setState({
       order: this.state.order === Order.ASC ? Order.DESC : Order.ASC
     });
-
   }
 
   render() {
     const {children, sort, orderStatus, field} = this.props;
     const {order} = this.state;
 
-    const classes = classname({
+    const classes = classnames({
       'sort-default': sort,
       'sort-asc': sort && orderStatus.field === field && order === Order.ASC,
       'sort-desc': sort && orderStatus.field === field && order === Order.DESC

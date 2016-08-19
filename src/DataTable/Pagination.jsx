@@ -1,5 +1,5 @@
-import React, { PropTypes } from 'react'
-import classname from 'classname';
+import React, {PropTypes} from 'react';
+import classnames from 'classnames';
 import {paginationButtons} from './utils/utils';
 import {PAGE_SIZE, BUTTONS_COUNT} from './utils/Constants';
 
@@ -32,7 +32,7 @@ class Pagination extends React.Component {
   renderPagination() {
     const {size, total, activePage, pager} = this.props;
     const length = Math.ceil(total / size);
-    const previousPage = activePage === 1 ? 1: activePage - 1;
+    const previousPage = activePage === 1 ? 1 : activePage - 1;
     const nextPage = activePage === length ? length : activePage + 1;
     let pageButtons = [];
 
@@ -42,9 +42,9 @@ class Pagination extends React.Component {
 
     if (!pager) {
       const pageNumbers = paginationButtons(BUTTONS_COUNT, activePage, length).map((value, index) => {
-        const classes = classname({
+        const classes = classnames({
           'pagination-button': true,
-          'active': value + 1 === activePage
+          'active': (value + 1) === activePage //eslint-disable-line
         });
         return (
           value === 'ellipsis' ? <li key={`ellipsis${index}`} className={classes}>...</li> :
@@ -62,7 +62,7 @@ class Pagination extends React.Component {
     return pageButtons;
   }
 
-  render () {
+  render() {
     const style = {
       root: {
         width: '100%',
@@ -75,7 +75,6 @@ class Pagination extends React.Component {
       }
     };
 
-    const {pager} = this.props;
     const pageButtons = this.renderPagination();
 
     return (

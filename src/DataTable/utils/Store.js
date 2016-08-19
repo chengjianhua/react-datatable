@@ -4,7 +4,7 @@
 import {Order} from './Constants';
 import {stringIsNotEmpty} from './utils';
 
-function _sort({array, sortField, order}) {
+function sortArray({array, sortField, order}) {
   order = order.toLowerCase();
   const isAsc = order === Order.ASC;
 
@@ -12,7 +12,7 @@ function _sort({array, sortField, order}) {
     let valueA = a[sortField] === null ? '' : a[sortField];
     let valueB = b[sortField] === null ? '' : b[sortField];
 
-    if(!isAsc) {
+    if (!isAsc) {
       const temp = valueA; valueA = valueB; valueB = temp;
     }
 
@@ -23,7 +23,6 @@ function _sort({array, sortField, order}) {
 
 class Store {
   constructor(data) {
-
     this.data = data.slice();
     this.sortInfo = null;
     this.columns = null;
@@ -32,11 +31,10 @@ class Store {
       text: '',
       result: this.data.slice()
     };
-    // this.filteredData = data;
   }
 
   setData(data) {
-    if (this.getSearchEnable()){
+    if (this.getSearchEnable()) {
       this.setSearchResult(data);
     } else {
       this.data = data;
@@ -56,15 +54,15 @@ class Store {
   }
 
   setSearchText(searchText) {
-    if(stringIsNotEmpty(searchText)) {
+    if (stringIsNotEmpty(searchText)) {
       this.searchInfo.text = searchText;
       this.searchInfo.enable = true;
-      return this.search();
+      this.search();
     } else {
       this.searchInfo.text = searchText;
       this.searchInfo.enable = false;
-      return this;
     }
+    return this;
   }
   getSearchText() {
     return this.searchInfo.text;
@@ -103,7 +101,7 @@ class Store {
     this.setSortInfo(sortField, order);
     let currentData = this.getCurrentData();
 
-    currentData = _sort({
+    currentData = sortArray({
       array: currentData,
       sortField,
       order
@@ -117,18 +115,16 @@ class Store {
    * 仅限内部的 setSearchText 调用，不需要手动调用
    */
   search() {
-    if(this.getSearchEnable()) {
+    if (this.getSearchEnable()) {
       const data = this.data.slice();
       const searchText = this.getSearchText();
       const columnKeys = Object.keys(this.getColumns());
       // 拼接字符串成正则表达式，可实现简单有效的模糊匹配
       const reg = new RegExp(searchText.toLocaleLowerCase().split('').join('.*?'), ['g']);
 
-      const result = data.filter((value) => {
-        return columnKeys.some((key) => {
-          return reg.exec(String(value[key]).toLocaleLowerCase());
-        });
-      });
+      const result = data.filter((value) =>
+        columnKeys.some((key) => reg.exec(String(value[key]).toLocaleLowerCase()))
+      );
 
       this.setSearchResult(result);
     }
