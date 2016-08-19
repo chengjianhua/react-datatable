@@ -9,7 +9,7 @@ export default class App extends Component {
     this.handleSearchChange = this.handleSearchChange.bind(this);
 
     this.state = {
-      query: 'b2g'
+      query: ''
     }
   }
 
@@ -38,6 +38,14 @@ export default class App extends Component {
       }
     };
 
+    const statusCell = (row, column, index) => {
+      return (
+        <div>
+          row--{row[column.field]}
+        </div>
+      )
+    };
+
     return (
       <div>
         <h1>Hello, world.</h1>
@@ -52,17 +60,24 @@ export default class App extends Component {
           >
           <Column
             sort
-            width="30%"
+            width="60%"
             field="name"
             >
             名称
           </Column>
           <Column
             sort
-            width="70%"
+            width="20%"
             field="modified_time"
             >
             创建时间
+          </Column>
+          <Column
+            width="20%"
+            field="status"
+            cell={statusCell}
+            >
+            状态
           </Column>
         </DataTable>
       </div>

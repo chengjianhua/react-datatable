@@ -74,6 +74,9 @@ class DataTable extends Component {
 
   }
 
+  /**
+   * 获取每一列的 props 属性并存储为一个数组
+   */
   getColumns() {
     return React.Children.map(this.props.children, (child, index) => {
       const props = child.props;
@@ -81,6 +84,9 @@ class DataTable extends Component {
     });
   }
 
+  /**
+   * 根据每一列的配置信息生成列表的头部信息
+   */
   getTableHeaders() {
     return React.Children.map(this.props.children, (child, index) => {
       const {sort, field} = child.props;
@@ -91,6 +97,9 @@ class DataTable extends Component {
     });
   }
 
+  /**
+   * 点击表格的标题时处理排序的函数，用于传递给 <Column /> 标题的 onSort 属性
+   */
   handleSort(sortField, order) {
     this.setState({
       data: this.store.sort(sortField, order).getCurrentData(),
@@ -100,6 +109,9 @@ class DataTable extends Component {
     });
   }
 
+  /**
+   * 处理分页按钮点击时切换分页的函数，用于传递给 <Pagination /> 组件的 onPage 属性
+   */
   handlePageChange(nextPage) {
     this.setState({
       activePage: nextPage
@@ -113,9 +125,15 @@ class DataTable extends Component {
     const end = start + pageSize;
     return data.slice(start, end).map((row, rowIndex) => {
       const tds = this.getColumns().map((column, columnIndex) => {
+        const {field, cell} = column;
+
+        // 如果 <Column /> 组件设定了 cell 属性则使用自定义的单元格组件否则只是简单
+        // 输出改列单元格的值的字符串格式
+        const cellPresentation = cell ? cell(row, column, rowIndex) : row[column.field];
+
         return (
           <td key={`${rowIndex}-${columnIndex}`}>
-            {row[column.field]}
+            {cellPresentation}
           </td>
         );
       });
@@ -140,11 +158,13 @@ class DataTable extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    // 当 <DataTable /> 组件的 searchText 属性发生变化的时候将 searchText 存入 store
+    // 中并且触发 store 中的搜索函数并且设定当前 state 中的数据为搜索后的结果
     if(nextProps.searchText !== this.store.searchText) {
       this.store.setSearchText(nextProps.searchText);
       this.setState({
         data: this.store.getCurrentData(),
-        activePage: 1
+        activePage: 1 // 还原分页值，避免饭呢也数由少变多的时候失去 active 状态
       });
     }
   }
@@ -153,6 +173,7 @@ class DataTable extends Component {
     const {hover, data, children} = this.props;
 
     const cols = this.getColumns().map((column, index) => {
+      // 根据 <Column /> 中的配置信息设定列的格式
       return (
         <col key={column.index} style={{width: column.width}} />
       );

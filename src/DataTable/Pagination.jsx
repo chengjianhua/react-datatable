@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react'
 import classname from 'classname';
+import {paginationButtons} from './utils/utils';
 
-const MAX_LENGTH = 10;
+const BUTTONS_COUNT = 9;
 
 class Pagination extends React.Component {
 
@@ -28,82 +29,37 @@ class Pagination extends React.Component {
   }
 
   render () {
-
     const style = {
       root: {
         width: '100%',
         position: 'relative',
-        margin: '1rem auto'
+        margin: '1rem auto',
+        overflow: 'auto'
+      },
+      pagination: {
+        float: 'right'
       }
     };
 
     const {size, total, activePage} = this.props;
     const length = Math.ceil(total / size);
-    const pageButtons = [];
     const previousPage = activePage === 1 ? 1: activePage - 1;
     const nextPage = activePage === length ? length : activePage + 1;
 
-
-    const range = [3, length - 2];
-    let middle = [];
-
-    let b = Math.floor((MAX_LENGTH - 4) / 2);
-    let a = b - 1;
-
-    for(let index = activePage - a, length = activePage + b; index <= length; index++) {
-      middle.push(index);
-    }
-    if(middle[0] <= 0) {
-      let diff = Math.abs(middle[0] - 1);
-      middle = middle.map(value => value + diff);
-    }
-    if(middle[middle.length - 1] > length) {
-      let diff = Math.abs(middle[middle.length - 1] - length);
-      middle = middle.map(value => value - diff);
-    }
-    console.log(middle[middle.length - 1]);
-    console.log(middle);
-
-    for(let index = 1; index <= length; index++) {
+    const pageButtons = paginationButtons(BUTTONS_COUNT, activePage, length).map((value, index) => {
       const classes = classname({
         'pagination-button': true,
-        'active': index === activePage
+        'active': value + 1 === activePage
       });
-      if(length <= MAX_LENGTH) {
-        pageButtons.push(
-          <li className={classes} key={index} onClick={this.handlePageButtonClick.bind(this, index)}><span>{index}</span></li>
-        );
-      } else {
-
-        if([1,  length].includes(index)) {
-          pageButtons.push(
-            <li className={classes} key={index} onClick={this.handlePageButtonClick.bind(this, index)}><span>{index}</span></li>
-          );
-        } else {
-          if(middle.includes(index)){
-            if(index === middle[0] && middle[0] !== 2) {
-              pageButtons.push(
-                <li className={classes} key='ellipsis-left'>...</li>
-              );
-            }
-            pageButtons.push(
-              <li className={classes} key={index} onClick={this.handlePageButtonClick.bind(this, index)}><span>{index}</span></li>
-            );
-            if(index === middle[middle.length - 1] && middle[middle.length - 1] !== length - 1) {
-              pageButtons.push(
-                <li className={classes} key='ellipsis-right'>...</li>
-              );
-            }
-          }
-
-
-        }
-      }
-    }
+      return (
+        value === 'ellipsis' ? <li key={`ellipsis${index}`} className={classes}>...</li> :
+          <li className={classes} key={value + 1} onClick={this.handlePageButtonClick.bind(this, value + 1)}><span>{value + 1}</span></li>
+      );
+    });
 
     return (
       <div style={style.root}>
-        <ul className="pagination">
+        <ul style={style.pagination} className="pagination">
           <li key="previous" className="pagination-button previous" onClick={this.handlePageButtonClick.bind(this, previousPage)}>{'<'}</li>
           {pageButtons}
           <li key="next" className="pagination-button next" onClick={this.handlePageButtonClick.bind(this, nextPage)}>{'>'}</li>
