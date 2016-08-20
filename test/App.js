@@ -54,7 +54,7 @@ export default class App extends Component {
         </div>
         <DataTable
           hover
-          data={data.data.task_list}
+          data={data}
           search
           searchText={this.state.query}
           >
