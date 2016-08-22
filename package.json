@@ -4,7 +4,8 @@
   "description": "A simple data table implementaition by react.js, to replace the jQuery data table with simple usages. ",
   "scripts": {
     "start": "node test/server.js",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "build": "webpack --config webpack.production.config.js --colors --display-error-details"
   },
   "repository": {
     "type": "git",
@@ -21,10 +22,9 @@
   },
   "homepage": "https://github.com/chengjianhua/react-datatable",
   "devDependencies": {
-    "babel": "^6.5.2",
     "babel-core": "^6.13.2",
     "babel-eslint": "^6.1.2",
-    "babel-loader": "^6.0.1",
+    "babel-loader": "^6.2.5",
     "babel-preset-es2015": "^6.13.2",
     "babel-preset-react": "^6.11.1",
     "babel-preset-stage-0": "^6.5.0",

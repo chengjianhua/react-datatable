@@ -8,6 +8,10 @@ Install dependencies.
 npm install
 ```
 
+```bash
+npm build # generate bundled file
+```
+
 ## Usage
 
 ### `<DataTable />`
