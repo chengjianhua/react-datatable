@@ -4,7 +4,8 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
   entry: [
-    path.join(__dirname, 'src/DataTable/index.js')
+    path.join(__dirname, 'src/DataTable/index.js'),
+    path.join(__dirname, 'src/DataTable/index.scss')
   ],
   resolve: {
     extensions: ['', '.js', '.jsx']
@@ -14,7 +15,7 @@ module.exports = {
     filename: 'index.js'
   },
   plugins: [
-    new ExtractTextPlugin('assets/react-datatable.css'),
+    new ExtractTextPlugin('react-datatable.css'),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         warnings: false

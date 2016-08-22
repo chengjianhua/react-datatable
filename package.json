@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node test/server.js",
     "lint": "eslint src",
-    "build": "webpack --config webpack.production.config.js --colors --display-error-details"
+    "build": "webpack --config webpack.production.config.js --colors --display-error-details --progress"
   },
   "repository": {
     "type": "git",
