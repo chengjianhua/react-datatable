@@ -1,6 +1,8 @@
 # react-datatable
 A simple data table implementaition by react.js, to replace the jQuery data table with simple usages.
 
+And it's motivated by [AllenFang/react\-bootstrap\-table: It's a react table for bootstrap](https://github.com/AllenFang/react-bootstrap-table). Actually, this project can be regarded as a simple version of that. I borrowed many of his ideas. Thanks for open source.
+
 ## Install
 Install dependencies.
 
