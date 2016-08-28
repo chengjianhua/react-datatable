@@ -2,7 +2,7 @@
 // 包括一系列对 Data Table 中数据的操作藏发的集合,用于管理 Data Table 中的数据 //
 ////////////////////////////////////////////////////////////////////////////
 import {Order} from './Constants';
-import {stringIsNotEmpty} from './utils';
+import {checkNonEmptyString} from './utils';
 
 function sortArray({array, sortField, order}) {
   order = order.toLowerCase();
@@ -26,6 +26,7 @@ class Store {
     this.data = data.slice();
     this.sortInfo = null;
     this.columns = null;
+    this.keys = null;
     this.searchInfo = {
       enable: false,
       text: '',
@@ -37,9 +38,17 @@ class Store {
     if (this.getSearchEnable()) {
       this.setSearchResult(data);
     } else {
-      this.data = data;
+      this.data = data.slice();
     }
   }
+
+  setKeys(keys) {
+    this.keys = keys.slice();
+  }
+  getKeys() {
+    return this.keys.slice();
+  }
+
   /**
    * 保存当前的排序信息
    */
@@ -54,7 +63,7 @@ class Store {
   }
 
   setSearchText(searchText) {
-    if (stringIsNotEmpty(searchText)) {
+    if (checkNonEmptyString(searchText)) {
       this.searchInfo.text = searchText;
       this.searchInfo.enable = true;
       this.search();
@@ -72,7 +81,7 @@ class Store {
     return this;
   }
   getSearchEnable() {
-    return this.searchInfo.enable && stringIsNotEmpty(this.searchInfo.text);
+    return this.searchInfo.enable && checkNonEmptyString(this.searchInfo.text);
   }
   getSearchResult() {
     const {result} = this.searchInfo;
@@ -118,7 +127,7 @@ class Store {
     if (this.getSearchEnable()) {
       const data = this.data.slice();
       const searchText = this.getSearchText();
-      const columnKeys = Object.keys(this.getColumns());
+      const columnKeys = this.getKeys();
       // 拼接字符串成正则表达式，可实现简单有效的模糊匹配
       const reg = new RegExp(searchText.toLocaleLowerCase().split('').join('.*?'), ['g']);
 

@@ -11,19 +11,6 @@ class Pagination extends React.Component {
     this.renderPagination = this.renderPagination.bind(this);
   }
 
-  static propTypes = {
-    total: PropTypes.number.isRequired,
-    size: React.PropTypes.number,
-    activePage: PropTypes.number,
-    pager: PropTypes.bool
-  };
-
-  static defaultProps = {
-    size: PAGE_SIZE,
-    activePage: 1,
-    pager: false
-  };
-
   handlePageButtonClick(nextPage) {
     const {onPage} = this.props;
     onPage && onPage(nextPage);
@@ -79,12 +66,25 @@ class Pagination extends React.Component {
 
     return (
       <div style={style.root}>
-        <ul style={style.pagination} className="pagination">
+        <ul style={style.pagination} className="data-table-pagination">
           {pageButtons}
         </ul>
       </div>
     );
   }
 }
+
+Pagination.propTypes = {
+  total: PropTypes.number.isRequired,
+  size: React.PropTypes.number,
+  activePage: PropTypes.number,
+  pager: PropTypes.bool
+};
+
+Pagination.defaultProps = {
+  size: PAGE_SIZE,
+  activePage: 1,
+  pager: false
+};
 
 export default Pagination;

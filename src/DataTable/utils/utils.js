@@ -55,18 +55,18 @@ function paginationButtons(buttons, page, pages) {
 }
 
 /**
- * [stringIsNotEmpty 判断字符串是否内容不为空，过滤掉各种空白字符]
- * @method stringIsNotEmpty
+ * [checkNonEmptyString 判断字符串是否内容不为空，过滤掉各种空白字符]
+ * @method checkNonEmptyString
  * @author chengjianhua
  * @date   2016-08-19
  * @param  {[string]}         string [需要判断是否不为空的字符串]
  * @return {[bool]}                [字符串不空白则返回真，否则假]
  */
-function stringIsNotEmpty(string) {
+function checkNonEmptyString(string) {
   return string.replace(/(^\s*)|(\s*$)/g, '').length !== 0;
 }
 
 export {
   paginationButtons,
-  stringIsNotEmpty
+  checkNonEmptyString
 };

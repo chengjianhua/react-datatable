@@ -8,20 +8,6 @@ import classnames from 'classnames';
 import {Order} from './utils/Constants';
 
 class Column extends React.Component {
-
-  static propTypes = {
-    children: PropTypes.node,
-    cell: PropTypes.func,
-    width: PropTypes.string,
-    field: PropTypes.string.isRequired,
-    sort: PropTypes.bool
-  };
-
-  static defaultProps = {
-    width: 'auto',
-    sort: true
-  };
-
   constructor(props) {
     super(props);
 
@@ -61,5 +47,18 @@ class Column extends React.Component {
     );
   }
 }
+
+Column.propTypes = {
+  children: PropTypes.node,
+  cell: PropTypes.func,
+  width: PropTypes.string,
+  field: PropTypes.string.isRequired,
+  sort: PropTypes.bool
+};
+
+Column.defaultProps = {
+  width: 'auto',
+  sort: true
+};
 
 export default Column;
