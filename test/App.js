@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {DataTable, Column} from '../src/DataTable';
 import data from './data';
+import '../src/DataTable/index.scss';
 
 export default class App extends Component {
   constructor(props) {
